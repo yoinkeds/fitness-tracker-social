@@ -110,7 +110,7 @@ export default function Feed({ user }: { user: { id: string; email: string } }) 
           value={newPost}
           onChange={e => setNewPost(e.target.value)}
           placeholder="Share your workout or motivation..."
-          className="flex-1 px-4 py-2 rounded-lg border dark:bg-gray-700"
+           className="flex-1 px-4 py-2 rounded-lg border dark:bg-gray-700 text-gray-900 dark:text-white dark:placeholder-white"
           required
           disabled={loading}
           maxLength={180}

@@ -59,45 +59,45 @@ const Profile = ({ user }: { user: { id: string; email: string } }) => {
 
   return (
     <div className="max-w-xl mx-auto mt-12 bg-white dark:bg-gray-800 p-8 rounded-xl shadow grid gap-5">
-      <h2 className="text-2xl font-semibold mb-4 text-center">My Profile</h2>
+      <h2 className="text-2xl font-semibold mb-4 text-center text-gray-900 dark:text-white">My Profile</h2>
       <form onSubmit={handleSubmit} className="grid gap-5">
-        <label className="flex flex-col gap-1">
+        <label className="flex flex-col gap-1 text-gray-900 dark:text-white">
           Username
           <input
             name="username"
             type="text"
-            className="rounded border px-3 py-2 dark:bg-gray-700"
+            className="rounded border px-3 py-2 dark:bg-gray-700 text-gray-900 dark:text-white"
             value={profile.username}
             onChange={handleChange}
             required
           />
         </label>
-        <label className="flex flex-col gap-1">
+        <label className="flex flex-col gap-1 text-gray-900 dark:text-white">
           Full Name
           <input
             name="full_name"
             type="text"
-            className="rounded border px-3 py-2 dark:bg-gray-700"
+            className="rounded border px-3 py-2 dark:bg-gray-700 text-gray-900 dark:text-white"
             value={profile.full_name}
             onChange={handleChange}
           />
         </label>
-        <label className="flex flex-col gap-1">
+        <label className="flex flex-col gap-1 text-gray-900 dark:text-white">
           Avatar URL
           <input
             name="avatar_url"
             type="text"
-            className="rounded border px-3 py-2 dark:bg-gray-700"
+            className="rounded border px-3 py-2 dark:bg-gray-700 text-gray-900 dark:text-white"
             value={profile.avatar_url}
             onChange={handleChange}
             placeholder="(optional) https://..."
           />
         </label>
-        <label className="flex flex-col gap-1">
+        <label className="flex flex-col gap-1 text-gray-900 dark:text-white">
           Bio
           <textarea
             name="bio"
-            className="rounded border px-3 py-2 dark:bg-gray-700"
+            className="rounded border px-3 py-2 dark:bg-gray-700 text-gray-900 dark:text-white"
             value={profile.bio}
             onChange={handleChange}
             rows={3}

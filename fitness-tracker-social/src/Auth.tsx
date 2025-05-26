@@ -28,44 +28,48 @@ const Auth = () => {
   }
 
   return (
-    <div className="flex flex-col items-center justify-center h-screen bg-gray-100 dark:bg-gray-900">
+    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 dark:bg-gray-900 transition-colors">
       <form
         onSubmit={handleAuth}
-        className="bg-white dark:bg-gray-800 p-8 rounded-lg shadow-lg w-[22rem] flex flex-col gap-4"
+        className="bg-white dark:bg-gray-800 p-8 rounded-xl shadow-lg w-full max-w-sm flex flex-col gap-6"
       >
-        <h2 className="text-2xl font-semibold text-center mb-2">
+        <h2 className="text-2xl font-semibold text-center mb-2 text-gray-900 dark:text-white tracking-tight">
           {isSignUp ? "Sign Up" : "Sign In"}
         </h2>
         <input
           type="email"
           placeholder="Email"
-          className="rounded-md border px-3 py-2 focus:outline-none"
+          className="rounded-md border px-3 py-2 focus:outline-none bg-white dark:bg-gray-700 text-gray-900 dark:text-white dark:placeholder-gray-400"
           value={email}
           onChange={e => setEmail(e.target.value)}
           required
+          autoComplete="email"
         />
         <input
           type="password"
           placeholder="Password"
-          className="rounded-md border px-3 py-2 focus:outline-none"
+          className="rounded-md border px-3 py-2 focus:outline-none bg-white dark:bg-gray-700 text-gray-900 dark:text-white dark:placeholder-gray-400"
           value={password}
           onChange={e => setPassword(e.target.value)}
           required
+          autoComplete={isSignUp ? 'new-password' : 'current-password'}
         />
         <button
           type="submit"
-          className="bg-blue-600 hover:bg-blue-700 text-white py-2 rounded font-semibold"
+          className="bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg font-semibold transition disabled:opacity-50"
           disabled={loading}
         >
-          {loading ? "Loading..." : isSignUp ? "Sign Up" : "Sign In"}
+          {loading ? (
+            <span className="animate-pulse">Loading...</span>
+          ) : isSignUp ? "Sign Up" : "Sign In"}
         </button>
-        {error && <p className="text-red-500 text-sm">{error}</p>}
-        {message && <p className="text-green-500 text-sm">{message}</p>}
-        <div className="text-sm mt-2 text-center">
+        {error && <p className="text-red-500 text-center text-sm">{error}</p>}
+        {message && <p className="text-green-500 text-center text-sm">{message}</p>}
+        <div className="text-sm text-center text-gray-700 dark:text-gray-300">
           {isSignUp ? "Already have an account?" : "Need an account?"}
           <button
             type="button"
-            className="text-blue-500 underline ml-2"
+            className="text-blue-600 dark:text-blue-300 underline ml-2"
             onClick={() => setIsSignUp(!isSignUp)}
           >
             {isSignUp ? "Sign In" : "Sign Up"}
