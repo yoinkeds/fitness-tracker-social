@@ -1,0 +1,120 @@
+import { useEffect, useState } from 'react'
+import { supabase } from './supabaseClient'
+
+type ProfileData = {
+  username: string
+  full_name: string
+  avatar_url: string
+  bio: string
+}
+
+const EMPTY_PROFILE: ProfileData = {
+  username: '',
+  full_name: '',
+  avatar_url: '',
+  bio: ''
+}
+
+const Profile = ({ user }: { user: { id: string; email: string } }) => {
+  const [profile, setProfile] = useState<ProfileData>(EMPTY_PROFILE)
+  const [loading, setLoading] = useState(false)
+  const [message, setMessage] = useState<string | null>(null)
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    const getProfile = async () => {
+      setLoading(true)
+      setMessage(null)
+      setError(null)
+      let { data, error } = await supabase
+        .from('profiles')
+        .select('username, full_name, avatar_url, bio')
+        .eq('id', user.id)
+        .single()
+      if (error && error.code !== 'PGRST116') setError(error.message) // PGREST116 = no rows found
+      if (data) setProfile(data)
+      setLoading(false)
+    }
+    getProfile()
+  }, [user.id])
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    setProfile({ ...profile, [e.target.name]: e.target.value })
+  }
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setLoading(true)
+    setMessage(null)
+    setError(null)
+    const updates = { ...profile, id: user.id }
+    let { error } = await supabase.from('profiles').upsert(updates, { onConflict: 'id' })
+    if (error) {
+      setError(error.message)
+    } else {
+      setMessage('Profile updated!')
+    }
+    setLoading(false)
+  }
+
+  return (
+    <div className="max-w-xl mx-auto mt-12 bg-white dark:bg-gray-800 p-8 rounded-xl shadow grid gap-5">
+      <h2 className="text-2xl font-semibold mb-4 text-center">My Profile</h2>
+      <form onSubmit={handleSubmit} className="grid gap-5">
+        <label className="flex flex-col gap-1">
+          Username
+          <input
+            name="username"
+            type="text"
+            className="rounded border px-3 py-2 dark:bg-gray-700"
+            value={profile.username}
+            onChange={handleChange}
+            required
+          />
+        </label>
+        <label className="flex flex-col gap-1">
+          Full Name
+          <input
+            name="full_name"
+            type="text"
+            className="rounded border px-3 py-2 dark:bg-gray-700"
+            value={profile.full_name}
+            onChange={handleChange}
+          />
+        </label>
+        <label className="flex flex-col gap-1">
+          Avatar URL
+          <input
+            name="avatar_url"
+            type="text"
+            className="rounded border px-3 py-2 dark:bg-gray-700"
+            value={profile.avatar_url}
+            onChange={handleChange}
+            placeholder="(optional) https://..."
+          />
+        </label>
+        <label className="flex flex-col gap-1">
+          Bio
+          <textarea
+            name="bio"
+            className="rounded border px-3 py-2 dark:bg-gray-700"
+            value={profile.bio}
+            onChange={handleChange}
+            rows={3}
+          />
+        </label>
+        <button
+          type="submit"
+          className="bg-blue-600 hover:bg-blue-700 text-white py-2 rounded font-semibold disabled:opacity-50"
+          disabled={loading}
+        >
+          {loading ? 'Saving...' : 'Save Profile'}
+        </button>
+        {error && <p className="text-red-500">{error}</p>}
+        {message && <p className="text-green-500">{message}</p>}
+      </form>
+    </div>
+  )
+}
+
+export default Profile
