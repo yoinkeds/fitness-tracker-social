@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { supabase } from './supabaseClient'
+import { supabase } from '../lib/supabaseClient'
 
 type ProfileData = {
   username: string
@@ -56,6 +56,34 @@ const Profile = ({ user }: { user: { id: string; email: string } }) => {
     }
     setLoading(false)
   }
+  const [uploading, setUploading] = useState(false);
+
+  const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return;
+
+    setUploading(true)
+    const fileExt = file.name.split('.').pop()
+    const filePath = `${user.id}.${fileExt}`
+
+    let { error: uploadError } = await supabase.storage
+      .from('avatars')
+      .upload(filePath, file, { upsert: true })
+
+    if (uploadError) {
+      setError(uploadError.message)
+      setUploading(false)
+      return
+    }
+
+    const { data } = supabase
+      .storage
+      .from('avatars')
+      .getPublicUrl(filePath)
+
+    setProfile({ ...profile, avatar_url: data.publicUrl }) // set new avatar
+    setUploading(false)
+  }
 
   return (
     <div className="max-w-xl mx-auto mt-12 bg-white dark:bg-gray-800 p-8 rounded-xl shadow grid gap-5">
@@ -83,14 +111,13 @@ const Profile = ({ user }: { user: { id: string; email: string } }) => {
           />
         </label>
         <label className="flex flex-col gap-1 text-gray-900 dark:text-white">
-          Avatar URL
+          Profile Picture
           <input
-            name="avatar_url"
-            type="text"
-            className="rounded border px-3 py-2 dark:bg-gray-700 text-gray-900 dark:text-white"
-            value={profile.avatar_url}
-            onChange={handleChange}
-            placeholder="(optional) https://..."
+            type="file"
+            accept="image/*"
+            className="text-sm mt-1"
+            onChange={handleAvatarUpload}
+            disabled={uploading}
           />
         </label>
         <label className="flex flex-col gap-1 text-gray-900 dark:text-white">
